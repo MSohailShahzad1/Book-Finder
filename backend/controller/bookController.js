@@ -26,6 +26,7 @@ const searchBooks = async (req, res) => {
             const olMatch = openBooks.find(ob => ob.isbn?.includes(isbn));
 
             const book = {
+                bookId: gBook.id,
                 title: volumeInfo.title || "Unknown Title",
                 authors: volumeInfo.authors || ["Unknown Author"],
                 isbn: isbn || null,

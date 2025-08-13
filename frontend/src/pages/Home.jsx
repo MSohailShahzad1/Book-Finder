@@ -4,6 +4,8 @@ import BookCard from "../components/BookCard";
 import axios from "axios";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import Header from "../components/Header";
+import { toast } from "react-toastify";
 
 const Home = () => {
     const [books, setBooks] = useState([]);
@@ -15,16 +17,16 @@ const Home = () => {
             const res = await axios.get(`http://localhost:3000/api/books/${query}`);
             setBooks(res.data);
         } catch (err) {
-            console.error("Failed to fetch books", err);
+            toast.error("Failed to fetch books", err);
         }
         setLoading(false);
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-4">
+        <div className="min-h-screen p-4 bg-variable relative">
             <h1 className="text-3xl font-bold text-center mb-4">📚 Book Finder</h1>
+            <Header />
             <SearchBar onSearch={fetchBooks} />
-
             {loading ? (
                 Array(5).fill().map((_, i) => (
                     <div className="book-card" key={i}>

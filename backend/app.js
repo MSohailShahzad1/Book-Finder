@@ -1,15 +1,19 @@
+require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
+const cors = require('cors'); // Load environment variables
 const bookRoutes = require('./routes/bookRoute');
-
-dotenv.config();
+const connectDB = require('./config/dbConnection');
+const authRoutes = require('./routes/authRoutes');
+const favoriteRoutes = require('./routes/favoriteRoutes');
+connectDB();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.use('/api/books', bookRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/favorites', favoriteRoutes);
 
 const PORT = process.env.PORT || 3000;
 
