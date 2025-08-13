@@ -18,13 +18,12 @@ const MyLibrary = () => {
             },
         })
             .then((res) => {
-                if (!res.ok) throw new Error("Failed to fetch favorites");
-                return res.json();
+                setFavorites(Array.isArray(res.data) ? res.data : []);
             })
-            .then((data) => {
-                setFavorites(Array.isArray(data) ? data : []);
-            })
-            .catch((err) => toast.error("Error fetching favorites:", err));
+            .catch((err) => {
+                toast.error("Error fetching favorites");
+            });
+
     }, [token]);
 
     // Remove favorite
@@ -37,8 +36,7 @@ const MyLibrary = () => {
                 },
             });
 
-            if (!res.ok) throw new Error("Failed to remove favorite");
-
+            if (res.status !== 200) throw new Error("Failed to remove favorite");
 
             setFavorites((prev) => prev.filter((book) => book._id !== bookId));
             toast.success("Favorite removed successfully");
