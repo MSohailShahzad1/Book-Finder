@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Trash2, BookOpen } from "lucide-react";
 import { toast } from "react-toastify";
+import api from "../api/axios";
 
 const MyLibrary = () => {
     const [favorites, setFavorites] = useState([]);
@@ -10,7 +11,7 @@ const MyLibrary = () => {
     // Fetch favorites
     useEffect(() => {
         if (!token) return;
-        fetch(`http://localhost:3000/api/favorites`, {
+        api.get(`/api/favorites`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
@@ -29,8 +30,8 @@ const MyLibrary = () => {
     // Remove favorite
     const handleRemoveFavorite = async (bookId) => {
         try {
-            const res = await fetch(
-                `http://localhost:3000/api/favorites/${bookId}`,
+            const res = await api.delete(
+                `/api/favorites/${bookId}`,
                 {
                     method: "DELETE",
                     headers: {

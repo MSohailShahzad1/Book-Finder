@@ -1,11 +1,11 @@
 import { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import BookCard from "../components/BookCard";
-import axios from "axios";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Header from "../components/Header";
 import { toast } from "react-toastify";
+import api from "../api/axios";
 
 const Home = () => {
     const [books, setBooks] = useState([]);
@@ -14,7 +14,7 @@ const Home = () => {
     const fetchBooks = async (query) => {
         setLoading(true);
         try {
-            const res = await axios.get(`http://localhost:3000/api/books/${query}`);
+            const res = await api.get(`/api/books/${query}`);
             setBooks(res.data);
         } catch (err) {
             toast.error("Failed to fetch books", err);

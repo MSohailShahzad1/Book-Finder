@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import api from '../api/axios';
 
 const ProfilePopup = ({ onClose }) => {
     const [profile, setProfile] = useState(null);
@@ -8,7 +9,7 @@ const ProfilePopup = ({ onClose }) => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem("bf_token");
-                const res = await axios.get("http://localhost:3000/api/auth/profile", {
+                const res = await api.get('/api/auth/profile', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setProfile(res.data);
