@@ -14,7 +14,7 @@ const Home = () => {
     const fetchBooks = async (query) => {
         setLoading(true);
         try {
-            const res = await api.get(`/api/books/${query}`);
+            const res = await api.get(`/books/${query}`);
             setBooks(res.data);
         } catch (err) {
             toast.error("Failed to fetch books", err);

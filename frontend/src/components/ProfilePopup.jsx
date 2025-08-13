@@ -9,7 +9,7 @@ const ProfilePopup = ({ onClose }) => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem("bf_token");
-                const res = await api.get('/api/auth/profile', {
+                const res = await api.get('/auth/profile', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setProfile(res.data);

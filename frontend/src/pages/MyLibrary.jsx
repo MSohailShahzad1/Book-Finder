@@ -11,7 +11,7 @@ const MyLibrary = () => {
     // Fetch favorites
     useEffect(() => {
         if (!token) return;
-        api.get(`/api/favorites`, {
+        api.get(`/favorites`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
@@ -30,16 +30,12 @@ const MyLibrary = () => {
     // Remove favorite
     const handleRemoveFavorite = async (bookId) => {
         try {
-            const res = await api.delete(
-                `/api/favorites/${bookId}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
+            const res = await api.delete(`/favorites/${bookId}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
 
             if (!res.ok) throw new Error("Failed to remove favorite");
 
