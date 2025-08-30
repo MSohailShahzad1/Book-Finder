@@ -6,6 +6,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import Header from "../components/Header";
 import { toast } from "react-toastify";
 import api from "../api/axios";
+import { useEffect } from "react";
 
 const Home = () => {
     const [books, setBooks] = useState([]);
@@ -21,6 +22,21 @@ const Home = () => {
         }
         setLoading(false);
     };
+    const fetchPopularBooks = async () => {
+        setLoading(true);
+        try {
+            const res = await api.get(`/books/popular-books`);
+            setBooks(res.data);
+        } catch (err) {
+            toast.error("Failed to load popular books");
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchPopularBooks();
+    }, []);
+
 
     return (
         <div className="min-h-screen p-4 bg-variable relative">

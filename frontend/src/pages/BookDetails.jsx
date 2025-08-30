@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { Heart } from "lucide-react";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
+import BookCard from "../components/BookCard";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function BookDetails() {
   const { id } = useParams();
@@ -13,7 +16,11 @@ export default function BookDetails() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false); // track favorite status
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Related books state
+  const [relatedBooks, setRelatedBooks] = useState([]);
+  const [loadingRelated, setLoadingRelated] = useState(false);
 
   useEffect(() => {
     async function fetchBookDetails() {
@@ -22,10 +29,16 @@ export default function BookDetails() {
         setBook(res.data);
 
         if (user) {
-          // Check if this book is in user's favorites
           const favRes = await axios.get("/favorites");
-          const exists = favRes.data.some(fav => fav.bookId === id);
+          const exists = favRes.data.some((fav) => fav.bookId === id);
           setIsFavorite(exists);
+        }
+
+        // ✅ Fetch related books (by first author or title keyword)
+        if (res.data.volumeInfo?.authors?.length > 0) {
+          fetchRelatedBooks(res.data.volumeInfo.authors[0]);
+        } else if (res.data.volumeInfo?.title) {
+          fetchRelatedBooks(res.data.volumeInfo.title.split(" ")[0]);
         }
       } catch (err) {
         console.error("Error fetching book details:", err);
@@ -36,19 +49,25 @@ export default function BookDetails() {
     fetchBookDetails();
   }, [id, user]);
 
+  const fetchRelatedBooks = async (query) => {
+    setLoadingRelated(true);
+    try {
+      const res = await axios.get(`/books/${query}`);
+      setRelatedBooks(res.data.filter((b) => b.bookId !== id).slice(0, 6));
+    } catch (err) {
+      console.error("Error fetching related books:", err);
+    } finally {
+      setLoadingRelated(false);
+    }
+  };
+
   if (loading) return <p className="text-center mt-8">Loading...</p>;
   if (!book?.volumeInfo) return <p className="text-center mt-8">Book not found.</p>;
 
-  const {
-    title,
-    authors,
-    description,
-    publishedDate,
-    imageLinks
-  } = book.volumeInfo;
+  const { title, authors, description, publishedDate, imageLinks } =
+    book.volumeInfo;
   const webReaderLink = book.accessInfo?.webReaderLink;
 
-  // Save/Remove from favorites
   const handleSave = async () => {
     if (!user) return toast.warning("Please login to manage favorites");
 
@@ -59,7 +78,7 @@ export default function BookDetails() {
         title,
         authors,
         thumbnail: imageLinks?.thumbnail,
-        availability: "Unknown"
+        availability: "Unknown",
       });
 
       if (res.data.action === "added") {
@@ -109,7 +128,6 @@ export default function BookDetails() {
               Published: {publishedDate || "N/A"}
             </p>
 
-            {/* Description */}
             <div
               className="prose prose-sm dark:prose-invert max-w-none mb-6"
               dangerouslySetInnerHTML={{
@@ -117,15 +135,13 @@ export default function BookDetails() {
               }}
             />
 
-            {/* Actions */}
             <div className="flex gap-4">
-              {/* Favorite Button */}
               <button
                 onClick={handleSave}
                 disabled={saving}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition ${isFavorite
-                  ? "bg-gray-600 hover:bg-gray-700 text-white"
-                  : "bg-red-500 hover:bg-red-600 text-white"
+                    ? "bg-gray-600 hover:bg-gray-700 text-white"
+                    : "bg-red-500 hover:bg-red-600 text-white"
                   }`}
               >
                 <Heart
@@ -139,7 +155,6 @@ export default function BookDetails() {
                     : "Save to Favorites"}
               </button>
 
-              {/* Read Online */}
               {webReaderLink && (
                 <a
                   href={webReaderLink}
@@ -153,6 +168,28 @@ export default function BookDetails() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto mt-10 p-6">
+        <h2 className="text-2xl font-bold mb-4">Related Books</h2>
+
+        {loadingRelated ? (
+          <div className="grid gap-6 md:grid-cols-3">
+            {Array(6)
+              .fill()
+              .map((_, i) => (
+                <Skeleton key={i} height={250} />
+              ))}
+          </div>
+        ) : relatedBooks.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-3">
+            {relatedBooks.map((rb, index) => (
+              <BookCard key={index} book={rb} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">No related books found.</p>
+        )}
       </div>
     </>
   );
