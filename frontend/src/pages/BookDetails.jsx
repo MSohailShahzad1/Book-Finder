@@ -13,12 +13,20 @@ export default function BookDetails() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false); // track favorite status
 
   useEffect(() => {
     async function fetchBookDetails() {
       try {
         const res = await axios.get(`/book/${id}`);
         setBook(res.data);
+
+        if (user) {
+          // Check if this book is in user's favorites
+          const favRes = await axios.get("/favorites");
+          const exists = favRes.data.some(fav => fav.bookId === id);
+          setIsFavorite(exists);
+        }
       } catch (err) {
         console.error("Error fetching book details:", err);
       } finally {
@@ -26,7 +34,7 @@ export default function BookDetails() {
       }
     }
     fetchBookDetails();
-  }, [id]);
+  }, [id, user]);
 
   if (loading) return <p className="text-center mt-8">Loading...</p>;
   if (!book?.volumeInfo) return <p className="text-center mt-8">Book not found.</p>;
@@ -40,24 +48,26 @@ export default function BookDetails() {
   } = book.volumeInfo;
   const webReaderLink = book.accessInfo?.webReaderLink;
 
-  // Save to favorites handler
+  // Save/Remove from favorites
   const handleSave = async () => {
-    if (!user) return toast.warning('Please login to save favorites');
+    if (!user) return toast.warning("Please login to manage favorites");
 
     try {
       setSaving(true);
-      const res = await api.post("/favorites", {
-        bookId: book.bookId,
-        title: book.title,
-        authors: book.authors,
-        thumbnail: book.coverImage,
-        availability: book.tags?.includes("Library Available") ? "Available" : "Not Available"
+      const res = await axios.post("/favorites", {
+        bookId: id,
+        title,
+        authors,
+        thumbnail: imageLinks?.thumbnail,
+        availability: "Unknown"
       });
 
       if (res.data.action === "added") {
         toast.success("Saved to favorites!");
+        setIsFavorite(true);
       } else if (res.data.action === "removed") {
         toast.info("Removed from favorites!");
+        setIsFavorite(false);
       }
     } catch (err) {
       console.error(err);
@@ -66,6 +76,7 @@ export default function BookDetails() {
       setSaving(false);
     }
   };
+
   return (
     <>
       <Header />
@@ -101,22 +112,31 @@ export default function BookDetails() {
             {/* Description */}
             <div
               className="prose prose-sm dark:prose-invert max-w-none mb-6"
-              dangerouslySetInnerHTML={{ __html: description || "No description available." }}
+              dangerouslySetInnerHTML={{
+                __html: description || "No description available.",
+              }}
             />
 
             {/* Actions */}
             <div className="flex gap-4">
-              {/* Save Button */}
+              {/* Favorite Button */}
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition disabled:bg-gray-400"
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition ${isFavorite
+                  ? "bg-gray-600 hover:bg-gray-700 text-white"
+                  : "bg-red-500 hover:bg-red-600 text-white"
+                  }`}
               >
                 <Heart
                   className="w-5 h-5"
-                  fill={saving ? "none" : "currentColor"}
+                  fill={isFavorite ? "currentColor" : "none"}
                 />
-                {saving ? "Saving..." : "Save to Favorites"}
+                {saving
+                  ? "Saving..."
+                  : isFavorite
+                    ? "Remove from Favorites"
+                    : "Save to Favorites"}
               </button>
 
               {/* Read Online */}
