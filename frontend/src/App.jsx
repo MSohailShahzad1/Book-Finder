@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+import BookDetails from './pages/BookDetails';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/book/:id" element={<BookDetails />} />
         {/* Protected: My Library */}
         <Route path="/my-library" element={
           <ProtectedRoute>

@@ -5,6 +5,7 @@ const bookRoutes = require('./routes/bookRoute');
 const connectDB = require('./config/dbConnection');
 const authRoutes = require('./routes/authRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
+const BookDetails = require('./routes/bookDetail');
 connectDB();
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/api/books', bookRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/book', BookDetails);
 
 const PORT = process.env.PORT || 3000;
 

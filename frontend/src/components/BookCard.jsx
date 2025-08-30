@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { useState } from 'react';
 import { Heart } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const BookCard = ({ book }) => {
     const { user } = useAuth();
@@ -13,17 +14,22 @@ const BookCard = ({ book }) => {
 
         try {
             setSaving(true);
-            await api.post("/favorites", {
+            const res = await api.post("/favorites", {
                 bookId: book.bookId,
                 title: book.title,
                 authors: book.authors,
                 thumbnail: book.coverImage,
                 availability: book.tags?.includes("Library Available") ? "Available" : "Not Available"
             });
-            toast.success('Saved to favorites!');
+
+            if (res.data.action === "added") {
+                toast.success("Saved to favorites!");
+            } else if (res.data.action === "removed") {
+                toast.info("Removed from favorites!");
+            }
         } catch (err) {
             console.error(err);
-            toast.error('Unable to save');
+            toast.error("Unable to update favorites");
         } finally {
             setSaving(false);
         }
@@ -33,11 +39,13 @@ const BookCard = ({ book }) => {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
             {/* Image */}
             <div className="relative">
-                <img
-                    src={book.coverImage}
-                    alt={book.title}
-                    className="w-full h-60 object-cover"
-                />
+                <Link to={`/book/${book.bookId}`}>
+                    <img
+                        src={book.coverImage}
+                        alt={book.title}
+                        className="w-full h-60 object-cover"
+                    />
+                </Link>
                 {/* Save button as floating icon */}
                 <button
                     onClick={handleSave}
@@ -50,26 +58,26 @@ const BookCard = ({ book }) => {
                     />
                 </button>
             </div>
-
             {/* Content */}
             <div className="p-4 flex flex-col flex-grow">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">{book.title}</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-300 mb-3">{book.authors?.join(', ')}</p>
+                <Link to={`/book/${book.bookId}`}>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">{book.title}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-300 mb-3">{book.authors?.join(', ')}</p>
 
-                {/* Tags */}
-                <div className="flex gap-2 mb-3 flex-wrap">
-                    {book.tags?.includes("Free eBook") && (
-                        <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
-                            Free eBook
-                        </span>
-                    )}
-                    {book.tags?.includes("Library Available") && (
-                        <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">
-                            Library Available
-                        </span>
-                    )}
-                </div>
-
+                    {/* Tags */}
+                    <div className="flex gap-2 mb-3 flex-wrap">
+                        {book.tags?.includes("Free eBook") && (
+                            <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
+                                Free eBook
+                            </span>
+                        )}
+                        {book.tags?.includes("Library Available") && (
+                            <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">
+                                Library Available
+                            </span>
+                        )}
+                    </div>
+                </Link>
                 {/* Links */}
                 <div className="mt-auto flex gap-4 text-sm">
                     {book.webReaderLink && (
