@@ -4,6 +4,7 @@ import axios from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { Heart } from "lucide-react";
 import { toast } from "react-toastify";
+import Header from "../components/Header";
 
 export default function BookDetails() {
   const { id } = useParams();
@@ -66,70 +67,73 @@ export default function BookDetails() {
     }
   };
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Book Cover */}
-        <div className="flex-shrink-0">
-          {imageLinks?.thumbnail ? (
-            <img
-              src={imageLinks.thumbnail}
-              alt={title}
-              className="w-48 h-auto rounded-lg shadow-md"
-            />
-          ) : (
-            <div className="w-48 h-72 bg-gray-200 rounded-lg flex items-center justify-center">
-              No Image
-            </div>
-          )}
-        </div>
-
-        {/* Book Info */}
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {title}
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
-            {authors?.join(", ")}
-          </p>
-          <p className="text-sm text-gray-500 mb-4">
-            Published: {publishedDate || "N/A"}
-          </p>
-
-          {/* Description */}
-          <div
-            className="prose prose-sm dark:prose-invert max-w-none mb-6"
-            dangerouslySetInnerHTML={{ __html: description || "No description available." }}
-          />
-
-          {/* Actions */}
-          <div className="flex gap-4">
-            {/* Save Button */}
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition disabled:bg-gray-400"
-            >
-              <Heart
-                className="w-5 h-5"
-                fill={saving ? "none" : "currentColor"}
+    <>
+      <Header />
+      <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Book Cover */}
+          <div className="flex-shrink-0">
+            {imageLinks?.thumbnail ? (
+              <img
+                src={imageLinks.thumbnail}
+                alt={title}
+                className="w-48 h-auto rounded-lg shadow-md"
               />
-              {saving ? "Saving..." : "Save to Favorites"}
-            </button>
-
-            {/* Read Online */}
-            {webReaderLink && (
-              <a
-                href={webReaderLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
-              >
-                Read Online
-              </a>
+            ) : (
+              <div className="w-48 h-72 bg-gray-200 rounded-lg flex items-center justify-center">
+                No Image
+              </div>
             )}
+          </div>
+
+          {/* Book Info */}
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              {title}
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
+              {authors?.join(", ")}
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Published: {publishedDate || "N/A"}
+            </p>
+
+            {/* Description */}
+            <div
+              className="prose prose-sm dark:prose-invert max-w-none mb-6"
+              dangerouslySetInnerHTML={{ __html: description || "No description available." }}
+            />
+
+            {/* Actions */}
+            <div className="flex gap-4">
+              {/* Save Button */}
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition disabled:bg-gray-400"
+              >
+                <Heart
+                  className="w-5 h-5"
+                  fill={saving ? "none" : "currentColor"}
+                />
+                {saving ? "Saving..." : "Save to Favorites"}
+              </button>
+
+              {/* Read Online */}
+              {webReaderLink && (
+                <a
+                  href={webReaderLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
+                >
+                  Read Online
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
