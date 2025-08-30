@@ -4,6 +4,7 @@ import { Trash2, BookOpen } from "lucide-react";
 import { toast } from "react-toastify";
 import api from "../api/axios";
 import Header from "../components/Header";
+import { Link } from 'react-router-dom';
 
 const MyLibrary = () => {
     const [favorites, setFavorites] = useState([]);
