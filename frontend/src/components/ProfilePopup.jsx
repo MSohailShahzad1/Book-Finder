@@ -21,12 +21,12 @@ const ProfilePopup = ({ onClose }) => {
     }, []);
 
     return (
-        <div className="absolute right-4 top-14 bg-white shadow-lg rounded-lg p-4 w-64 z-50">
+        <div className="absolute right-4 top-14 bg-variable shadow-lg rounded-lg p-4 w-64 z-50">
             {profile ? (
                 <>
                     <h3 className="font-bold text-lg mb-2">👤 {profile.username}</h3>
-                    <p className="text-sm text-gray-700">📧 {profile.email}</p>
-                    <p className="text-xs text-gray-500 mt-2">User ID: {profile._id}</p>
+                    <p className="text-sm  ">📧 {profile.email}</p>
+                    <p className="text-xs mt-2">User ID: {profile._id}</p>
                     <button
                         onClick={onClose}
                         className="mt-4 w-full bg-red-500 text-white py-1 rounded"
