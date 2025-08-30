@@ -20,11 +20,11 @@ const Register = () => {
     return (
         <>
             <Header />
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="max-w-md w-full bg-white rounded-xl p-8 shadow">
-                    <h2 className="text-2xl font-semibold text-center mb-4">Create account</h2>
+            <div className="min-h-screen flex items-center justify-center bg-variable dark:bg-gray-900 px-4">
+                <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl p-8 shadow">
+                    <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800 dark:text-white">Create account</h2>
 
-                    {error && <div className="bg-red-100 text-red-800 px-3 py-2 rounded mb-3">{error}</div>}
+                    {error && <div className="bg-red-100 dark:bg-red-900 text-red-800 px-3 py-2 rounded mb-3">{error}</div>}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <input
@@ -32,7 +32,7 @@ const Register = () => {
                             value={form.username}
                             onChange={handleChange}
                             placeholder="Username"
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                         <input
@@ -40,7 +40,7 @@ const Register = () => {
                             value={form.email}
                             onChange={handleChange}
                             placeholder="Email"
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             type="email"
                             required
                         />
@@ -49,7 +49,7 @@ const Register = () => {
                             value={form.password}
                             onChange={handleChange}
                             placeholder="Password"
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             type="password"
                             required
                         />
@@ -62,8 +62,8 @@ const Register = () => {
                         </button>
                     </form>
 
-                    <p className="mt-4 text-sm text-center">
-                        Already have an account? <Link to="/login" className="text-blue-600">Login</Link>
+                    <p className="mt-4 text-sm text-center text-gray-600 dark:text-gray-300">
+                        Already have an account? <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:underline">Login</Link>
                     </p>
                 </div>
             </div>
