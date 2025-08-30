@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ProfilePopup from './ProfilePopup';
 import DarkModeToggle from "./DarkModeToggle";
+import { toast } from 'react-toastify';
 
 const Header = () => {
     const { user, logout } = useAuth();
@@ -14,7 +15,16 @@ const Header = () => {
                 <Link to="/" className="font-bold text-xl">📚 Book Finder</Link>
                 <nav className="flex items-center gap-4">
                     <Link to="/" className="text-sm">Search</Link>
-                    <Link to="/my-library" className="text-sm">My Library</Link>
+                    {user ? (
+                        <Link to="/my-library" className="text-sm">My Library</Link>
+                    ) : (
+                        <button
+                            className="text-sm text-gray-600"
+                            onClick={() => toast.warning("Please login to acces Favorite")}
+                        >
+                            My Library
+                        </button>
+                    )}
 
                     {user ? (
                         <>
