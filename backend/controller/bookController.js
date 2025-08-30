@@ -60,5 +60,38 @@ const searchBooks = async (req, res) => {
         res.status(500).json({ error: "Something went wrong." });
     }
 };
+// controllers/bookController.js
+const getPopularBooks = async (req, res) => {
+    try {
+        // Fetch fiction category from Google Books
+        const googleRes = await axios.get(
+            `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&maxResults=10`
+        );
+        const googleBooks = googleRes.data.items || [];
 
-module.exports = { searchBooks };
+        // Map into your normalized format
+        const popularBooks = googleBooks.map(gBook => {
+            const volumeInfo = gBook.volumeInfo;
+            const accessInfo = gBook.accessInfo;
+
+            return {
+                bookId: gBook.id,
+                title: volumeInfo.title || "Unknown Title",
+                authors: volumeInfo.authors || ["Unknown Author"],
+                isbn: (volumeInfo.industryIdentifiers || [])[0]?.identifier || null,
+                coverImage: volumeInfo.imageLinks?.thumbnail || null,
+                tags: [],
+                libraryLink: null,
+                webReaderLink: accessInfo?.webReaderLink || null,
+            };
+        });
+
+        res.json(popularBooks);
+    } catch (err) {
+        console.error("Error fetching popular books:", err.message);
+        res.status(500).json({ error: "Something went wrong." });
+    }
+};
+
+module.exports = { searchBooks, getPopularBooks };
+
